@@ -11,17 +11,32 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
+            //RentalAdd();
             //CarAdd();
             //GetAll();
             //GetCarsByColorId();
             //GetCarsByBrandId();
-            GetCarDetails();
+            //GetCarDetails();
             Console.ReadLine();
+        }
+        private static void RentalAdd()
+        {
+            RentalManager rentalManager = new RentalManager(new EfRentalDal());
+
+            var rental = new Rental
+            {
+                CarId = 1,
+                CustomerId = 1,
+                RentDate = Convert.ToDateTime("13.09.2005"),
+                ReturnDate = Convert.ToDateTime("13.09.2005")
+            };
+
+            var result = rentalManager.RentalAdd(rental);
+            Console.WriteLine(result.Message); //Hata verir.
         }
         private static void CarAdd()
         {
             CarManager carManager = new CarManager(new EfCarDal());
-            Rules rules = new Rules();
             
             var car = new Car {
                 BrandId = 1,
@@ -30,26 +45,15 @@ namespace ConsoleUI
                 DailyPrice=200,
                 Description="A"};
 
-            if (car.DailyPrice<0)
-            {
-                Console.WriteLine(rules.CarDailyPriceRule);
-            }
-            else if (car.Description.Length < 2)
-            {
-                Console.WriteLine(rules.CarMinTwoCharacters);
-            }
-            else
-            {
                 carManager.CarAdd(car);
-                Console.WriteLine(rules.CarAdded);
-            }
+          
             
 
         }
         private static void GetCarsByBrandId()
         {
             CarManager carManager = new CarManager(new EfCarDal());
-            foreach (var item in carManager.GetCarsByBrandId(2))
+            foreach (var item in carManager.GetCarsByBrandId(2).Data)
             {
                 Console.Write("Araba Id : " + item.CarId +
                               " Marka Id : " + item.BrandId +
@@ -64,7 +68,7 @@ namespace ConsoleUI
         private static void GetCarDetails()
         {
             CarManager carManager = new CarManager(new EfCarDal());
-            foreach (var item in carManager.GetCarDetails())
+            foreach (var item in carManager.GetCarDetails().Data)
             {
                 Console.Write(" Araba Adı : " + item.CarName +
                               " Marka Adı : " + item.BrandName +
@@ -78,7 +82,7 @@ namespace ConsoleUI
         private static void GetCarsByColorId()
         {
             CarManager carManager = new CarManager(new EfCarDal());
-            foreach (var item in carManager.GetCarsByColorId(2))
+            foreach (var item in carManager.GetCarsByColorId(2).Data)
             {
                 Console.Write("Araba Id : " + item.CarId +
                               " Marka Id : " + item.BrandId +
@@ -93,16 +97,22 @@ namespace ConsoleUI
         private static void GetAll()
         {
             CarManager carManager = new CarManager(new EfCarDal());
-            foreach (var item in carManager.GetAll())
+            var result = carManager.GetAll();
+            if (result.Success)
             {
-                Console.Write("Araba Id : " + item.CarId +
-                              " Marka Id : " + item.BrandId +
-                              " Renk Id : " + item.ColorId +
-                              " Model Yılı : " + item.ModelYear.ToString("yyyy") +
-                              " Günlük Fiyat : " + item.DailyPrice +
-                              " Açıklama : " + item.Description);
-                Console.WriteLine();
+                foreach (var item in result.Data)
+                {
+                    Console.Write("Araba Id : " + item.CarId +
+                                  " Marka Id : " + item.BrandId +
+                                  " Renk Id : " + item.ColorId +
+                                  " Model Yılı : " + item.ModelYear.ToString("yyyy") +
+                                  " Günlük Fiyat : " + item.DailyPrice +
+                                  " Açıklama : " + item.Description);
+                    Console.WriteLine();
+                }
+                Console.WriteLine(result.Message);
             }
+               
             
         }
     }
