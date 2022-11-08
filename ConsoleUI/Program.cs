@@ -11,10 +11,11 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            CarAdd();
+            //CarAdd();
             //GetAll();
             //GetCarsByColorId();
             //GetCarsByBrandId();
+            GetCarDetails();
             Console.ReadLine();
         }
         private static void CarAdd()
@@ -59,6 +60,20 @@ namespace ConsoleUI
                 Console.WriteLine();
             }
             
+        }
+        private static void GetCarDetails()
+        {
+            CarManager carManager = new CarManager(new EfCarDal());
+            foreach (var item in carManager.GetCarDetails())
+            {
+                Console.Write(" Araba Adı : " + item.CarName +
+                              " Marka Adı : " + item.BrandName +
+                              " Renk Adı : " + item.ColorName +
+                              " Günlük Fiyat : " + item.DailyPrice
+                              );
+                Console.WriteLine();
+            }
+
         }
         private static void GetCarsByColorId()
         {
